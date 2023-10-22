@@ -8,7 +8,9 @@ import "react-toastify/dist/ReactToastify.css";
 import SignIn from "./Pages/SignIn/SignIn";
 import SignUp from "./Pages/SignUp/SignUp";
 import ChangePassword from "./Pages/ChangePassword/Change";
+import VerifyEmail from "./Pages/VerifyEmail/VerifyEmail";
 import ResetPassword from "./Pages/ResetPassword/Reset";
+import UpdatePassword from "./Pages/UpdatePassword/UpdatePassword";
 import Home from "./Pages/Home/Home";
 import Profile from "./Pages/Profile/Profile";
 import Selections from "./Pages/Selections/Selections";
@@ -25,13 +27,21 @@ const router = createBrowserRouter([
     path: "/signUp",
     element: <SignUp />,
   },
+  // { DEPRECATED
+  //   path: "/changePassword",
+  //   element: <ChangePassword />,
+  // },
   {
-    path: "/changePassword",
-    element: <ChangePassword />,
+    path: "/updatePassword",
+    element: <UpdatePassword />,
   },
   {
     path: "/resetPassword",
     element: <ResetPassword />,
+  },
+  {
+    path: "/verifyEmail",
+    element: <VerifyEmail />,
   },
   {
     path: "/home",
