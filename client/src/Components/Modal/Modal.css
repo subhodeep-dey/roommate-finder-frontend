@@ -1,0 +1,127 @@
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.8);
+  display: grid;
+  place-items: center;
+  transition: 0.3s ease-in-out all;
+  z-index: 100;
+}
+.modal-container {
+  width: 600px;
+  height: 60vh;
+  background: #ffffff;
+  border-radius: 0.25rem;
+}
+.habits {
+  font-family: "Causten-SemiBold", Helvetica;
+  margin: 0 auto;
+  width: 90%;
+  height: 90%;
+  padding-bottom: 10px;
+  padding-top: 10px;
+  display: block;
+}
+
+.habits-buttons {
+  display: flex;
+  flex-direction: column;
+  height: 60px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+.activehabits {
+  height: 60px;
+  width: 100px;
+  border-bottom: 2px solid #000000;
+  color: #000000;
+  display: inline-flex;
+  justify-content: center;
+  align-items: flex-end;
+}
+.habits-text {
+  font-size: 24px;
+  display: flex;
+  justify-content: flex-start;
+  font-weight: bold;
+}
+.habitssection {
+  height: 43vh;
+  padding: 20px 0 20px 0;
+}
+.habits button {
+  padding-left: 0.75rem;
+  padding-right: 0.75rem;
+  padding-top: 0.1rem;
+  padding-bottom: 0.1rem;
+  background-color: #06105a;
+  border-radius: 4px;
+  align-self: flex-start;
+  cursor: pointer;
+  color: #ffffff;
+  font-size: medium;
+  font-family: "Causten-Medium", Helvetica;
+}
+@media screen and (max-width: 630px) {
+  .modal-container {
+    width: 280px;
+    height: 280px;
+    background: #ffffff;
+    border-radius: 0.25rem;
+  }
+  .habits {
+    font-family: "Causten-SemiBold", Helvetica;
+    margin: 0 auto;
+    width: 90%;
+    height: 90%;
+    padding-bottom: 10px;
+    padding-top: 10px;
+    display: block;
+  }
+
+  .habits-buttons {
+    display: flex;
+    flex-direction: column;
+    height: 40px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+  }
+
+  .activehabits {
+    height: 40px;
+    width: 50px;
+    border-bottom: 2px solid #000000;
+    color: #000000;
+    display: inline-flex;
+    justify-content: center;
+    align-items: flex-end;
+  }
+  .habits-text {
+    font-size: 16px;
+    display: flex;
+    justify-content: flex-start;
+    font-weight: bold;
+  }
+  .habitssection {
+    height: 195px;
+    padding: 8px 0 8px 0;
+    font-size: 12px;
+  }
+  .habits button {
+    padding-left: 0.5rem !important;
+    padding-right: 0.5rem !important;
+    padding-top: 0.1rem !important;
+    padding-bottom: 0rem !important;
+    background-color: #06105a !important;
+    border-radius: 4px !important;
+    align-self: flex-start !important;
+    cursor: pointer !important;
+    color: #ffffff !important;
+    font-size: 12px !important;
+    font-family: "Causten-Medium", Helvetica !important;
+  }
+}

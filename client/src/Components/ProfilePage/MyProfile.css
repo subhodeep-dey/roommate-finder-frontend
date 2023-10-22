@@ -71,6 +71,8 @@ form {
 }
 
 .form-section-3b input {
+  padding: 1rem;
+  font-size: 1rem;
   margin-bottom: 4px;
   background-color: #d9d9d9;
   border-radius: 8px;
@@ -80,7 +82,7 @@ form {
   position: relative;
 }
 .form-section-3 .flex {
-  height: 6rem;
+  height: 80px;
   outline: none;
   border: 2px solid #7e8490;
   width: 42.7vw;
@@ -97,7 +99,7 @@ form {
 .form-section-3-border {
   width: 43vw;
   display: flex;
-  padding-left: 12%;
+  padding-left: 5%;
   justify-content: flex-start;
   align-items: center;
 }
@@ -166,7 +168,7 @@ form {
     align-items: center;
   }
   .form-section-3 .flex {
-    height: 6rem;
+    height: 80px;
     outline: none;
     border: 2px solid #7e8490;
     width: 89.7vw;

@@ -42,6 +42,7 @@ const Profilepage = () => {
           firstname: data.firstname,
           lastname: data.lastname,
           regnum: data.regnum,
+          gender: data.gender,
           emailid: data.username,
           mobileno: data.mobile,
         });
@@ -134,6 +135,10 @@ const Profilepage = () => {
         newErrors["mobileno"] = "*Please enter valid contact no.";
       }
     }
+    if (!fields["gender"]) {
+      formIsValid = false;
+      newErrors["gender"] = "*Please select your gender.";
+    }
     setErrors(newErrors);
     return formIsValid;
   };
@@ -147,7 +152,7 @@ const Profilepage = () => {
         firstname: firstName,
         lastname: lastName,
         regnum: regnum,
-        gender: gender,
+        gender: fields.gender,
         rank: rank,
         mobile: contactNumber,
         currentUserAdminStatus: false,
@@ -239,11 +244,13 @@ const Profilepage = () => {
                                 ? "border-2 border-black"
                                 : ""
                             }`}
-                            onClick={() =>
+                            onClick={(e) => {
                               handleChange({
                                 target: { name: "gender", value: "M" },
-                              })
-                            }
+                              });
+                              setGender("M");
+                              setChangesMade(true);
+                            }}
                           >
                             M
                           </div>
@@ -255,16 +262,19 @@ const Profilepage = () => {
                                 ? "border-2 border-black"
                                 : ""
                             }`}
-                            onClick={() =>
+                            onClick={(e) => {
                               handleChange({
                                 target: { name: "gender", value: "F" },
-                              })
-                            }
+                              });
+                              setGender("F");
+                              setChangesMade(true);
+                            }}
                           >
                             F
                           </div>
                         </span>
                       </div>
+                      <div className="errorMsg">{errors.gender}</div>
                     </div>
 
                     <div className="form-section-3b">
@@ -347,8 +357,8 @@ const Profilepage = () => {
         </div>
         <div className="tab-content">
           <div className="cards">
-            <DisplayRoomListingCard />
             <DisplayRoommateListingCard />
+            <DisplayRoomListingCard />
           </div>
         </div>
       </div>

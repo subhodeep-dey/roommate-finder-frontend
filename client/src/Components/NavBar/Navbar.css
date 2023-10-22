@@ -107,6 +107,14 @@
   background-repeat: no-repeat;
   background-size: cover;
 }
+.logout {
+  height: 40px;
+  width: 40px;
+  background-image: url("/public/image/LogOut Butten.png");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
 .fa-firstdraft {
   margin-left: 0.5rem;
   font-size: 1.6rem;

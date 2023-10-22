@@ -150,183 +150,216 @@ function Reset() {
     <div className="flex flex-col h-screen">
       <Header />
       <div className="flex flex-grow h-auto">
-        <div className="hidden md:inline-block md:w-[45%] bg-[#D9D9D9]"> </div>
-        <div className="w-[100%] md:w-[55%] flex justify-center">
-          {isReset ? (
-            <div className="flex flex-col pt-[2rem] items-center w-[80%]">
-              <h1 className="text-[#333] text-[1.75rem] font-[600] w-full">
-                Reset Your Password
-              </h1>
-              <p className="mb-5 text-[#3C4242] text-[14px] w-full">
-                Enter your email and we'll send you a link to reset your
-                password
-              </p>
-
-              <div className="w-full mb-6">
-                <span className="text-[#3C4242] text-[16px]">Email</span>
-                <input
-                  name="email"
-                  value={form.email}
-                  onChange={formOnChangeHandler}
-                  placeholder="mfc.vit2023@vitstudent.ac.in"
-                  className=" mt-2 rounded-[8px] border-[#3C4242] border-[1px] w-full p-[0.75rem] "
-                />
-                {formError?.email ? (
-                  <p className="text-[14px] mt-1 text-[#EE1D52]">
-                    {formError.email}
-                  </p>
-                ) : null}
-              </div>
-
-              <button
-                onClick={sendClickHandler}
-                disabled={formError.email ? true : false}
-                className="bg-[#06105A] px-[2rem] py-[0.75rem] text-white rounded-[8px] self-start disabled:hover:cursor-not-allowed"
-              >
-                {" "}
-                Send
-              </button>
-              <span className="text-[#3C4242] text-[14px] mt-2 self-start">
-                Back to
-                <Link to="/">
-                  <span className="underline ml-2">Log In</span>
-                </Link>
-              </span>
+        {isReset ? (
+          <>
+            <div
+              className="hidden md:inline-block md:w-[45%] bg-cover bg-center"
+              style={{
+                backgroundImage: `url(${require("../../Assets/resetpassword.png")})`,
+              }}
+            >
+              {" "}
             </div>
-          ) : null}
-          {isVerification ? (
-            <div className="flex flex-col pt-[2rem] items-center w-[80%]">
-              <h1 className="text-[#333] text-[1.75rem] font-[600] w-full">
-                Verification
-              </h1>
-              <p className="mb-5 text-[#3C4242] text-[14px] w-full">
-                Verify your code
-              </p>
+            <div className="w-[100%] md:w-[55%] flex justify-center">
+              <div className="flex flex-col pt-[2rem] items-center w-[80%]">
+                <h1 className="text-[#333] text-[1.75rem] font-[600] w-full">
+                  Reset Your Password
+                </h1>
+                <p className="mb-5 text-[#3C4242] text-[14px] w-full">
+                  Enter your email and we'll send you a link to reset your
+                  password
+                </p>
 
-              <div className="w-full mb-6">
-                <span className="text-[#3C4242] text-[16px]">
-                  Verification Code
-                </span>
-                <input
-                  name="code"
-                  value={verifyForm.code}
-                  onChange={verifyFormOnChangeHandler}
-                  className=" mt-2 rounded-[8px] border-[#3C4242] border-[1px] w-full p-[0.75rem] "
-                />
-              </div>
-
-              <button
-                onClick={verifyCodeClickHandler}
-                className="bg-[#06105A] px-[2rem] py-[0.75rem] text-white rounded-[8px] self-start"
-              >
-                {" "}
-                Verify Code
-              </button>
-            </div>
-          ) : null}
-          {isNewPassword ? (
-            <div className="flex flex-col pt-[2rem] items-center w-[80%]">
-              <h1 className="text-[#333] text-[1.75rem] font-[600] w-full">
-                Create New Password
-              </h1>
-              <p className="mb-5 text-[#3C4242] text-[14px] w-full">
-                Your new password must be different from previous used
-                passwords.{" "}
-              </p>
-
-              <div className="w-full mb-6 flex flex-col">
-                <div className="flex justify-between">
-                  <span className="text-[#3C4242] text-[16px]">Password</span>
-                </div>
-                <div className="flex items-center justify-between">
+                <div className="w-full mb-6">
+                  <span className="text-[#3C4242] text-[16px]">Email</span>
                   <input
-                    value={resetPasswordForm.password}
-                    onChange={resetFormOnChangeHandler}
-                    name="password"
-                    type={!show.password ? "password" : ""}
-                    className="mt-2 rounded-l-[8px] border-[#3C4242] border-[1px] w-full p-[0.75rem] h-[100%] border-r-0 "
+                    name="email"
+                    value={form.email}
+                    onChange={formOnChangeHandler}
+                    placeholder="mfc.vit2023@vitstudent.ac.in"
+                    className=" mt-2 rounded-[8px] border-[#3C4242] border-[1px] w-full p-[0.75rem] "
                   />
-                  <span
-                    className=" mt-2 flex justify-between items-center  cursor-pointer rounded-r-[8px] border-[#3C4242] border-[1px] p-[0.75rem] h-[100%] border-l-0 "
-                    onClick={() => hideOnClickHandler("password")}
-                  >
-                    <span className="">
-                      {" "}
-                      {show.password ? (
-                        <BsEyeFill size={20} color={"#807D7E"} />
-                      ) : (
-                        <BsEyeSlashFill size={20} color={"#807D7E"} />
-                      )}
-                    </span>{" "}
-                  </span>
+                  {formError?.email ? (
+                    <p className="text-[14px] mt-1 text-[#EE1D52]">
+                      {formError.email}
+                    </p>
+                  ) : null}
                 </div>
-                <span className="text-[#807D7E] text-[14px] mt-1 hidden">
-                  Use 8 or more characters with a mix of letters, numbers &
-                  symbols
-                </span>
-                {resetFormError?.password ? (
-                  <p className="text-[14px] mt-1 text-[#EE1D52]">
-                    {resetFormError.password}
-                  </p>
-                ) : null}
-              </div>
 
-              <div className="w-full mb-6 flex flex-col">
-                <div className="flex justify-between">
-                  <span className="text-[#3C4242] text-[16px]">
-                    Confirm Password
-                  </span>
-                </div>
-                <div className="flex justify-between items-center">
+                <button
+                  onClick={sendClickHandler}
+                  disabled={formError.email ? true : false}
+                  className="bg-[#06105A] px-[2rem] py-[0.75rem] text-white rounded-[8px] self-start disabled:hover:cursor-not-allowed"
+                >
                   {" "}
-                  <input
-                    value={resetPasswordForm.confirmPassword}
-                    onChange={resetFormOnChangeHandler}
-                    name="confirmPassword"
-                    type={!show?.confirmPassword ? "password" : ""}
-                    className="mt-2 rounded-l-[8px] border-[#3C4242] border-[1px] w-full p-[0.75rem] h-[100%] border-r-0 "
-                  />
-                  <span
-                    className=" mt-2 flex items-center  cursor-pointer rounded-r-[8px] border-[#3C4242] border-[1px] p-[0.75rem] h-[100%] border-l-0 "
-                    onClick={() => hideOnClickHandler("confirmPassword")}
-                  >
-                    <span>
-                      {" "}
-                      {show.confirmPassword ? (
-                        <BsEyeFill size={20} color={"#807D7E"} />
-                      ) : (
-                        <BsEyeSlashFill size={20} color={"#807D7E"} />
-                      )}
-                    </span>{" "}
+                  Send
+                </button>
+                <span className="text-[#3C4242] text-[14px] mt-2 self-start">
+                  Back to
+                  <Link to="/">
+                    <span className="underline ml-2">Log In</span>
+                  </Link>
+                </span>
+              </div>
+            </div>
+          </>
+        ) : null}
+        {isVerification ? (
+          <>
+            <div
+              className="hidden md:inline-block md:w-[45%] bg-cover bg-center"
+              style={{
+                backgroundImage: `url(${require("../../Assets/verification.png")})`,
+              }}
+            >
+              {" "}
+            </div>
+            <div className="w-[100%] md:w-[55%] flex justify-center">
+              <div className="flex flex-col pt-[2rem] items-center w-[80%]">
+                <h1 className="text-[#333] text-[1.75rem] font-[600] w-full">
+                  Verification
+                </h1>
+                <p className="mb-5 text-[#3C4242] text-[14px] w-full">
+                  Verify your code
+                </p>
+
+                <div className="w-full mb-6">
+                  <span className="text-[#3C4242] text-[16px]">
+                    Verification Code
                   </span>
+                  <input
+                    name="code"
+                    value={verifyForm.code}
+                    onChange={verifyFormOnChangeHandler}
+                    className=" mt-2 rounded-[8px] border-[#3C4242] border-[1px] w-full p-[0.75rem] "
+                  />
                 </div>
 
-                <span className="text-[#807D7E] text-[14px] mt-1 hidden">
-                  Use 8 or more characters with a mix of letters, numbers &
-                  symbols
-                </span>
-                {resetFormError?.confirmPassword ? (
-                  <p className="text-[14px] mt-1 text-[#EE1D52]">
-                    {resetFormError.confirmPassword}
-                  </p>
-                ) : null}
+                <button
+                  onClick={verifyCodeClickHandler}
+                  className="bg-[#06105A] px-[2rem] py-[0.75rem] text-white rounded-[8px] self-start"
+                >
+                  {" "}
+                  Verify Code
+                </button>
               </div>
-
-              <button
-                onClick={resetPasswordClickHandler}
-                disabled={
-                  resetFormError.password || resetFormError.confirmPassword
-                    ? true
-                    : false
-                }
-                className="bg-[#06105A] px-[2rem] py-[0.75rem] text-white rounded-[8px] self-start disabled:hover:cursor-not-allowed"
-              >
-                {" "}
-                Reset Password
-              </button>
             </div>
-          ) : null}
-        </div>
+          </>
+        ) : null}
+        {isNewPassword ? (
+          <>
+            <div
+              className="hidden md:inline-block md:w-[45%] bg-cover bg-center"
+              style={{
+                backgroundImage: `url(${require("../../Assets/newpassword.png")})`,
+              }}
+            >
+              {" "}
+            </div>
+            <div className="w-[100%] md:w-[55%] flex justify-center">
+              <div className="flex flex-col pt-[2rem] items-center w-[80%]">
+                <h1 className="text-[#333] text-[1.75rem] font-[600] w-full">
+                  Create New Password
+                </h1>
+                <p className="mb-5 text-[#3C4242] text-[14px] w-full">
+                  Your new password must be different from previous used
+                  passwords.{" "}
+                </p>
+
+                <div className="w-full mb-6 flex flex-col">
+                  <div className="flex justify-between">
+                    <span className="text-[#3C4242] text-[16px]">Password</span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <input
+                      value={resetPasswordForm.password}
+                      onChange={resetFormOnChangeHandler}
+                      name="password"
+                      type={!show.password ? "password" : ""}
+                      className="mt-2 rounded-l-[8px] border-[#3C4242] border-[1px] w-full p-[0.75rem] h-[100%] border-r-0 "
+                    />
+                    <span
+                      className=" mt-2 flex justify-between items-center  cursor-pointer rounded-r-[8px] border-[#3C4242] border-[1px] p-[0.75rem] h-[100%] border-l-0 "
+                      onClick={() => hideOnClickHandler("password")}
+                    >
+                      <span className="">
+                        {" "}
+                        {show.password ? (
+                          <BsEyeFill size={20} color={"#807D7E"} />
+                        ) : (
+                          <BsEyeSlashFill size={20} color={"#807D7E"} />
+                        )}
+                      </span>{" "}
+                    </span>
+                  </div>
+                  <span className="text-[#807D7E] text-[14px] mt-1 hidden">
+                    Use 8 or more characters with a mix of letters, numbers &
+                    symbols
+                  </span>
+                  {resetFormError?.password ? (
+                    <p className="text-[14px] mt-1 text-[#EE1D52]">
+                      {resetFormError.password}
+                    </p>
+                  ) : null}
+                </div>
+
+                <div className="w-full mb-6 flex flex-col">
+                  <div className="flex justify-between">
+                    <span className="text-[#3C4242] text-[16px]">
+                      Confirm Password
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    {" "}
+                    <input
+                      value={resetPasswordForm.confirmPassword}
+                      onChange={resetFormOnChangeHandler}
+                      name="confirmPassword"
+                      type={!show?.confirmPassword ? "password" : ""}
+                      className="mt-2 rounded-l-[8px] border-[#3C4242] border-[1px] w-full p-[0.75rem] h-[100%] border-r-0 "
+                    />
+                    <span
+                      className=" mt-2 flex items-center  cursor-pointer rounded-r-[8px] border-[#3C4242] border-[1px] p-[0.75rem] h-[100%] border-l-0 "
+                      onClick={() => hideOnClickHandler("confirmPassword")}
+                    >
+                      <span>
+                        {" "}
+                        {show.confirmPassword ? (
+                          <BsEyeFill size={20} color={"#807D7E"} />
+                        ) : (
+                          <BsEyeSlashFill size={20} color={"#807D7E"} />
+                        )}
+                      </span>{" "}
+                    </span>
+                  </div>
+
+                  <span className="text-[#807D7E] text-[14px] mt-1 hidden">
+                    Use 8 or more characters with a mix of letters, numbers &
+                    symbols
+                  </span>
+                  {resetFormError?.confirmPassword ? (
+                    <p className="text-[14px] mt-1 text-[#EE1D52]">
+                      {resetFormError.confirmPassword}
+                    </p>
+                  ) : null}
+                </div>
+
+                <button
+                  onClick={resetPasswordClickHandler}
+                  disabled={
+                    resetFormError.password || resetFormError.confirmPassword
+                      ? true
+                      : false
+                  }
+                  className="bg-[#06105A] px-[2rem] py-[0.75rem] text-white rounded-[8px] self-start disabled:hover:cursor-not-allowed"
+                >
+                  {" "}
+                  Reset Password
+                </button>
+              </div>
+            </div>
+          </>
+        ) : null}
       </div>
     </div>
   );

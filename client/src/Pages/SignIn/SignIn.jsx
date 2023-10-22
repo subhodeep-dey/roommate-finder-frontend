@@ -12,7 +12,7 @@ import { useDispatch } from "react-redux";
 
 let initialFormState = { email: "", password: "" };
 function SignIn() {
-  const [showPassword, setShowPassword] = useState(false);
+  const [showPassword, setShowPassword] = useState(true);
   const [form, setForm] = useState(initialFormState);
   const [error, setError] = useState({ email: null, password: null });
   const dispatch = useDispatch();

@@ -1,9 +1,11 @@
 import React, { Component, useEffect, useState, useContext } from "react";
-import { useSelector } from "react-redux";
 import axios from "axios";
+import { useSelector } from "react-redux";
 import "./styles.css";
 import "../Cards/Cards.css";
 import { ListingContext } from "../../Context/listing-context";
+import Modal from "../../Components/Modal/Modal";
+import Modal2 from "../Modal/Modal2";
 
 function DisplayRoommateCard() {
   const profileData = JSON.parse(localStorage.getItem("profile"));
@@ -12,13 +14,24 @@ function DisplayRoommateCard() {
   const [roomPosts, setRoomPosts] = useState([]);
   const [filteredRoommatePosts, setFilteredRoommatePosts] = useState([]);
   const [filteredRoomPosts, setFilteredRoomPosts] = useState([]);
+  const [userGender, setUserGender] = useState([]);
+  const [userId, setUserId] = useState([]);
   const [following, setFollowing] = useState([]);
   const [likeRoom, setLikeRoom] = useState([]);
   const [selectedGender, setSelectedGender] = useState("All");
   const [selectedBlock, setSelectedBlock] = useState("All");
   const [selectedYear, setSelectedYear] = useState("All");
-  const { addToCart2 } = useContext(ListingContext);
-  const { addToCart } = useContext(ListingContext);
+  const [isLoading, setIsLoading] = useState(true);
+  const {
+    addToCart2,
+    addToCart,
+    showModal,
+    showModal2,
+    selectRoommateDetail,
+    seletedroommatedetail,
+    selectRoomDetail,
+    seletedroomdetail,
+  } = useContext(ListingContext);
 
   useEffect(() => {
     fetchFollowing();
@@ -69,43 +82,43 @@ function DisplayRoommateCard() {
       })
       .then((roomPostsWithUserDetails) => {
         setRoomPosts(roomPostsWithUserDetails);
+        setIsLoading(false);
       })
       .catch((error) => {
         console.log(error);
+        setIsLoading(false);
       });
   }, []);
 
   // Depricated function
-  const isFollowing = () => {
-    axios
-      .get(`http://roommate-finder-theta.vercel.app/user/${user?.user?._id}`)
-      .then((response) => {
-        const followingUserIds = response.data.map((user) => user.following);
-        // setFollowing(followingUserIds);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  };
 
   const fetchFollowing = () => {
     axios
       .get(
-        `http://roommate-finder-theta.vercel.app/user/${profileData.user._id}`
+        `https://roommate-finder-theta.vercel.app/user/${profileData.user._id}`
       )
       .then((response) => {
         console.log("Profile fetched:", response.data);
-        const followingUserIds = response.data.following;
+        const followingUserIds = response.data.likesRoommate;
         const likeRoomIds = response.data.likesRoom;
+        const userGender = response.data.gender;
+        const userId = response.data._id;
         setFollowing(followingUserIds);
         setLikeRoom(likeRoomIds);
-        console.log("Following fetched:", followingUserIds, likeRoomIds);
+        setUserGender(userGender);
+        setUserId(userId);
+        console.log(
+          "Following fetched:",
+          followingUserIds,
+          likeRoomIds,
+          userGender
+        );
       })
       .catch((error) => {
         console.error("Error fetching profile:", error);
       });
-    };
-    
+  };
+
   const filterByGenderAndBlock = (gender, block, year) => {
     setSelectedGender(gender);
     setSelectedBlock(block);
@@ -120,24 +133,28 @@ function DisplayRoommateCard() {
 
       const parseDate = (dateString) => new Date(dateString);
 
-      const filteredRoommateData = roommatePosts.filter((post) => {
-        console.log("Post Year:", post.year);
-        return (
-          (selectedGender === "All" || post.gender === selectedGender) &&
-          (selectedBlock === "All" || post.preferredBlock === selectedBlock) &&
-          (selectedYear === "All" || post.year === selectedYear)
-        );
-      })
-      .sort((a, b) => parseDate(b.updatedAt) - parseDate(a.updatedAt));
+      const filteredRoommateData = roommatePosts
+        .filter((post) => {
+          console.log("Post Year:", post.year);
+          return (
+            (selectedGender === "All" || post.gender === selectedGender) &&
+            (selectedBlock === "All" ||
+              post.preferredBlock === selectedBlock) &&
+            (selectedYear === "All" || post.year === selectedYear)
+          );
+        })
+        .sort((a, b) => parseDate(b.updatedAt) - parseDate(a.updatedAt));
 
-      const filteredRoomData = roomPosts.filter((post) => {
-        return (
-          (selectedGender === "All" || post.gender === selectedGender) &&
-          (selectedBlock === "All" || post.preferredBlock === selectedBlock) &&
-          (selectedYear === "All" || post.year === selectedYear)
-        );
-      })
-      .sort((a, b) => parseDate(b.updatedAt) - parseDate(a.updatedAt));
+      const filteredRoomData = roomPosts
+        .filter((post) => {
+          return (
+            (selectedGender === "All" || post.gender === selectedGender) &&
+            (selectedBlock === "All" ||
+              post.preferredBlock === selectedBlock) &&
+            (selectedYear === "All" || post.year === selectedYear)
+          );
+        })
+        .sort((a, b) => parseDate(b.updatedAt) - parseDate(a.updatedAt));
 
       console.log("Filtered Roommate Data:", filteredRoommateData);
       console.log("Filtered Room Data:", filteredRoomData);
@@ -149,220 +166,353 @@ function DisplayRoommateCard() {
     filterData();
   }, [selectedGender, selectedBlock, selectedYear, roommatePosts, roomPosts]);
 
-    console.log("user data: ", user);
-    console.log("user specific data: ", profileData);
-      async function followUser(otherUserId) {
-        let myUserId = user?.user?._id;
-        let requestBody = {
-          currentUserId: myUserId,
-        };
-        try {
-          let result = await axios.put(
-            `https://roommate-finder-theta.vercel.app/user/${otherUserId}/follow`,
-            requestBody
-          );
-          console.log("result: ", result);
-        } catch (err) {
-          console.error(err);
-        }
-      }
+  console.log("user data: ", user);
+  console.log("user specific data: ", profileData);
+  console.log("User Id:", userId);
+  console.log("User Gender:", userGender);
 
-      async function RoomLiking(otherRoomId) {
-        let myUserId = user?.user?._id;
-        let requestBody = {
-          roomId: otherRoomId,
-        };
-        try {
-          let result = await axios.put(
-            `https://roommate-finder-theta.vercel.app/user/${myUserId}/likesroom`,
-            requestBody
-          );
-          console.log("result: ", result);
-        } catch (err) {
-          console.error(err);
+  async function likeRoommate(otherUserId) {
+    try {
+      const usersResponse = await axios.get(
+        "https://roommate-finder-theta.vercel.app/roommate/all"
+      );
+
+      const otherUserData = usersResponse.data.find(
+        (user) => user._id === otherUserId
+      );
+
+      if (otherUserData) {
+        const otherUserGender = otherUserData.gender;
+        const roommateuserId = otherUserData.userId;
+        console.log(otherUserGender);
+        if (roommateuserId !== userId) {
+          if (
+            (userGender === "M" && otherUserGender === "M") ||
+            (userGender === "F" && otherUserGender === "F")
+          ) {
+            let myUserId = user?.user?._id;
+            let requestBody = {
+              roommateId: otherUserId,
+            };
+
+            let result = await axios.put(
+              `https://roommate-finder-theta.vercel.app/user/${myUserId}/likesRoommate`,
+              requestBody
+            );
+
+            console.log("result: ", result);
+
+            if (result.status === 200) {
+              // Update the check-icon immediately
+              const updatedFollowing = [...following];
+              if (!updatedFollowing.includes(otherUserId)) {
+                updatedFollowing.push(otherUserId);
+                setFollowing(updatedFollowing);
+              }
+            }
+          } else {
+            alert("Broo.. In VIT we don't have coed hostels.");
+          }
+        } else {
+          alert("You can't select your own post.");
         }
       }
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  async function RoomLiking(otherRoomId) {
+    try {
+      const roomResponse = await axios.get(
+        "https://roommate-finder-theta.vercel.app/room/all"
+      );
+
+      const roomDataResponse = roomResponse.data.find(
+        (room) => room._id === otherRoomId
+      );
+
+      if (roomDataResponse) {
+        const roomGender = roomDataResponse.gender;
+        const roomuserId = roomDataResponse.userId;
+        if (roomuserId !== userId) {
+          if (
+            (userGender === "M" && roomGender === "M") ||
+            (userGender === "F" && roomGender === "F")
+          ) {
+            let myUserId = user?.user?._id;
+            let requestBody = {
+              roomId: otherRoomId,
+            };
+
+            let result = await axios.put(
+              `https://roommate-finder-theta.vercel.app/user/${myUserId}/likesroom`,
+              requestBody
+            );
+
+            console.log("result: ", result);
+
+            if (result.status === 200) {
+              // Update the check-icon immediately
+              const updatedLikeRoom = [...likeRoom];
+              if (!updatedLikeRoom.includes(otherRoomId)) {
+                updatedLikeRoom.push(otherRoomId);
+                setLikeRoom(updatedLikeRoom);
+              }
+            }
+          } else {
+            alert("Broo.. In VIT we don't have coed hostels.");
+          }
+        } else {
+          alert("You can't select your own post.");
+        }
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  }
 
   return (
-    <div className="tabs">
-      <Tabs
-        filterByGenderAndBlock={filterByGenderAndBlock}
-        selectedGender={selectedGender}
-        selectedBlock={selectedBlock}
-        selectedYear={selectedYear}
-      >
-        <Tab label="Tab 1">
-          <div className="cards">
-            {(filteredRoommatePosts.length >= 0
-              ? filteredRoommatePosts
-              : roommatePosts
-            ).map((post) => (
-              <div className="each-card" key={post.id}>
-                <span className="cards">
-                  <div className="main-card">
-                    <div className="card-details">
-                      <div className="card-img"></div>
-                      <div className="card-info">
-                        <div className="card-informatios">
-                          <div className="card-name">
-                            {" "}
-                            {post.userDetails.firstname ?? "Null_Fname"}{" "}
-                            {post.userDetails.lastname ?? "Null_Lname"}
+    <>
+      <div className="tabs">
+        <Tabs
+          filterByGenderAndBlock={filterByGenderAndBlock}
+          selectedGender={selectedGender}
+          selectedBlock={selectedBlock}
+          selectedYear={selectedYear}
+        >
+          <Tab label="Tab 1">
+            {showModal && <Modal />}
+            <div className="cards">
+              {isLoading ? (
+                <div className="loading-text">Loading...</div>
+              ) : (
+                (filteredRoommatePosts.length >= 0
+                  ? filteredRoommatePosts
+                  : roommatePosts
+                ).map((post) => (
+                  <div className="each-card" key={post.id}>
+                    <span className="cards">
+                      <div className="main-card">
+                        <div className="card-details">
+                          <div className="card-img"></div>
+                          <div className="card-info">
+                            <div className="card-informatios">
+                              <div className="card-name">
+                                {post.userDetails.firstname ?? "Null_Fname"}{" "}
+                                {post.userDetails.lastname ?? "Null_Lname"}
+                              </div>
+                              {userGender && (
+                                <div
+                                  className="card-add"
+                                  onClick={() =>
+                                    likeRoommate(post._id, post.gender)
+                                  }
+                                >
+                                  {following.includes(post._id) ? (
+                                    <img
+                                      src="./image/checkbox.png"
+                                      alt=""
+                                      style={{ height: "24px", width: "24px" }}
+                                    />
+                                  ) : (
+                                    <img
+                                      src="./image/add-icon.png"
+                                      alt=""
+                                      style={{ height: "24px", width: "24px" }}
+                                    />
+                                  )}
+                                </div>
+                              )}
+                            </div>
+                            <div className="card-preference">
+                              <div className="card-rank">
+                                <div className="card-preference-title">
+                                  Rank
+                                </div>
+                                <div className="card-preference-content">
+                                  {post.rank}
+                                </div>
+                              </div>
+                              <div className="card-block">
+                                <div className="card-preference-title">
+                                  Prefered Block
+                                </div>
+                                <div className="card-preference-content">
+                                  {post.preferredBlock}
+                                </div>
+                              </div>
+                              <div className="card-bed">
+                                <div className="card-preference-title">
+                                  Prefered Bed Type
+                                </div>
+                                <div className="card-preference-content">
+                                  {post.preferredBed}
+                                </div>
+                              </div>
+                            </div>
+                            <div className="card-downers">
+                              <div className="card-year">
+                                <div className="card-preference-title">
+                                  Year
+                                </div>
+                                <div className="card-preference-Year">
+                                  {post.year}
+                                </div>
+                              </div>
+                              <div className="card-gender">
+                                <div className="card-preference-title">
+                                  Gender
+                                </div>
+                                <div className="card-preference-Gender">
+                                  {post.gender}
+                                </div>
+                              </div>
+                            </div>
                           </div>
-                          <div className="card-add" onClick={() => followUser(post.userId)}>
-                          {following.includes(post.userId) ? (
+                        </div>
+                        <div className="card-hr">
+                          <hr />
+                        </div>
+                        <div className="card-habits-section">
+                          <div className="card-habit">Habits</div>
+                          <div
+                            className="card-habit-details"
+                            onClick={() => selectRoommateDetail(post.desc)}
+                          >
+                            <div className="detail-box">
                               <img
-                              src="./image/tick-icon.png"
-                              alt=""
-                              style={{ height: "24px", width: "24px" }}
-                              />
-                          ) : (
-                              <img
-                                src="./image/add-icon.png"
+                                src="./image/desc.png"
                                 alt=""
-                                style={{ height: "24px", width: "24px" }}
+                                style={{ height: "18px", width: "18px" }}
                               />
-                          )}
-                          </div>
-                        </div>
-                        <div className="card-preference">
-                          <div className="card-rank">
-                            <div className="card-preference-title">Rank</div>
-                            <div className="card-preference-content">
-                              {" "}
-                              {post.rank}
-                            </div>
-                          </div>
-                          <div className="card-block">
-                            <div className="card-preference-title">
-                              Prefered Block
-                            </div>
-                            <div className="card-preference-content">
-                              {post.preferredBlock}
-                            </div>
-                          </div>
-                          <div className="card-bed">
-                            <div className="card-preference-title">
-                              Prefered Bed Type
-                            </div>
-                            <div className="card-preference-content">
-                              {" "}
-                              {post.preferredBed}
-                            </div>
-                          </div>
-                        </div>
-                        <div className="card-downers">
-                          <div className="card-year">
-                            <div className="card-preference-title">Year</div>
-                            <div className="card-preference-Year">
-                              {post.year}
-                            </div>
-                          </div>
-                          <div className="card-gender">
-                            <div className="card-preference-title">Gender</div>
-                            <div className="card-preference-Gender">
-                              {post.gender}
                             </div>
                           </div>
                         </div>
                       </div>
-                    </div>
-                    <div className="card-hr">
-                      <hr />
-                    </div>
-                    <div className="card-habits-section">
-                      <div className="card-habit"></div>
-                    </div>
+                    </span>
                   </div>
-                </span>
-              </div>
-            ))}
-          </div>
-        </Tab>
-        <Tab label="Tab 2">
-          <div className="cards">
-            {(filteredRoomPosts.length >= 0
-              ? filteredRoomPosts
-              : roomPosts
-            ).map((post) => (
-              <div div className="each-card" key={post.id}>
-                <span className="cards">
-                  <div className="main-card">
-                    <div className="card-details">
-                      <div className="card-img"></div>
-                      <div className="card-info">
-                        <div className="card-informatios">
-                          <div className="card-name">{post.preferredBlock} Block</div>
-                          <div className="card-add" onClick={() => RoomLiking(post._id)}>
-                          {likeRoom.includes(post._id) ? (
+                ))
+              )}
+            </div>
+          </Tab>
+          <Tab label="Tab 2">
+            {showModal2 && <Modal2 />}
+            <div className="cards">
+              {isLoading ? (
+                <div className="loading-text">Loading...</div>
+              ) : (
+                (filteredRoomPosts.length >= 0
+                  ? filteredRoomPosts
+                  : roomPosts
+                ).map((post) => (
+                  <div div className="each-card" key={post.id}>
+                    <span className="cards">
+                      <div className="main-card">
+                        <div className="card-details">
+                          <div className="card-img"></div>
+                          <div className="card-info">
+                            <div className="card-informatios">
+                              <div className="card-name">
+                                {post.preferredBlock} Block
+                              </div>
+                              <div
+                                className="card-add"
+                                onClick={() =>
+                                  RoomLiking(post._id, post.gender)
+                                }
+                              >
+                                {likeRoom.includes(post._id) ? (
+                                  <img
+                                    src="./image/checkbox.png"
+                                    alt=""
+                                    style={{ height: "24px", width: "24px" }}
+                                  />
+                                ) : (
+                                  <img
+                                    src="./image/add-icon.png"
+                                    alt=""
+                                    style={{ height: "24px", width: "24px" }}
+                                  />
+                                )}
+                              </div>
+                            </div>
+                            <div className="card-preference">
+                              <div className="card-rank">
+                                <div className="card-preference-title">
+                                  Rank
+                                </div>
+                                <div className="card-preference-content">
+                                  {post.rank}
+                                </div>
+                              </div>
+                              <div className="card-block">
+                                <div className="card-preference-title">
+                                  Prefered Bed
+                                </div>
+                                <div className="card-preference-content">
+                                  {post.preferredBed}
+                                </div>
+                              </div>
+                              <div className="card-bed">
+                                <div className="card-preference-title">
+                                  Remaining
+                                </div>
+                                <div className="card-preference-content">
+                                  {post.preferredBed}
+                                </div>
+                              </div>
+                            </div>
+                            <div className="card-downers2">
+                              <div className="card-year">
+                                <div className="card-preference-title">
+                                  Year
+                                </div>
+                                <div className="card-preference-Year">
+                                  {post.year}
+                                </div>
+                              </div>
+                              <div className="card-gender">
+                                <div className="card-preference-title">
+                                  Gender
+                                </div>
+                                <div className="card-preference-Gender">
+                                  {post.gender}
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="card-hr">
+                          <hr />
+                        </div>
+                        <div className="card-habits-section">
+                          <div className="card-habit">
+                            For Description - Click on the button:
+                          </div>
+                          <div
+                            className="card-habit-details"
+                            onClick={() => selectRoomDetail(post.desc)}
+                          >
+                            <div>
                               <img
-                              src="./image/tick-icon.png"
-                              alt=""
-                              style={{ height: "24px", width: "24px" }}
-                              />
-                          ) : (
-                              <img
-                                src="./image/add-icon.png"
+                                src="./image/desc.png"
                                 alt=""
-                                style={{ height: "24px", width: "24px" }}
+                                style={{ height: "18px", width: "18px" }}
                               />
-                          )}
-                          </div>
-                        </div>
-                        <div className="card-preference">
-                          <div className="card-rank">
-                            <div className="card-preference-title">Rank</div>
-                            <div className="card-preference-content">
-                              {post.rank}
-                            </div>
-                          </div>
-                          <div className="card-block">
-                            <div className="card-preference-title">
-                              Prefered Bed
-                            </div>
-                            <div className="card-preference-content">
-                              {post.preferredBed}
-                            </div>
-                          </div>
-                          <div className="card-bed">
-                            <div className="card-preference-title">
-                              Remaining
-                            </div>
-                            <div className="card-preference-content">
-                              remaining
-                            </div>
-                          </div>
-                        </div>
-                        <div className="card-downers2">
-                          <div className="card-year">
-                            <div className="card-preference-title">Year</div>
-                            <div className="card-preference-Year">
-                              {post.year}
-                            </div>
-                          </div>
-                          <div className="card-gender">
-                            <div className="card-preference-title">Gender</div>
-                            <div className="card-preference-Gender">
-                              {post.gender}
                             </div>
                           </div>
                         </div>
                       </div>
-                    </div>
-                    <div className="card-hr">
-                      <hr />
-                    </div>
-                    <div className="card-habits-section">
-                      <div className="card-habit"></div>
-                    </div>
+                    </span>
                   </div>
-                </span>
-              </div>
-            ))}
-          </div>
-        </Tab>
-      </Tabs>
-    </div>
+                ))
+              )}
+            </div>
+          </Tab>
+        </Tabs>
+      </div>
+    </>
   );
 }
 
@@ -468,25 +618,33 @@ const TabButtons = ({
         })}
         <div className="tab-dropdownbuttons">
           <div className="custom-select">
-          <select
+            <select
               onChange={(e) =>
-                filterByGenderAndBlock(selectedGender, selectedBlock, e.target.value)
+                filterByGenderAndBlock(
+                  selectedGender,
+                  selectedBlock,
+                  e.target.value
+                )
               }
             >
               <option hidden value="Year">
                 Year
               </option>
-              <option value="1">1</option>
-              <option value="2">2</option>
-              <option value="3">3</option>
-              <option value="4">4</option>
+              <option value="2024">2024</option>
+              <option value="2025">2025</option>
+              <option value="2026">2026</option>
+              <option value="2027">2027</option>
               <option value="All">All</option>
             </select>
           </div>
           <div className="custom-select">
             <select
               onChange={(e) =>
-                filterByGenderAndBlock(selectedGender, e.target.value, selectedYear)
+                filterByGenderAndBlock(
+                  selectedGender,
+                  e.target.value,
+                  selectedYear
+                )
               }
             >
               <option hidden value="Block">
@@ -515,14 +673,18 @@ const TabButtons = ({
           <div className="custom-select-2">
             <select
               onChange={(e) =>
-                filterByGenderAndBlock(e.target.value, selectedBlock, selectedYear)
+                filterByGenderAndBlock(
+                  e.target.value,
+                  selectedBlock,
+                  selectedYear
+                )
               }
             >
               <option hidden value="Gender">
                 Gender
               </option>
-              <option value="Male">Male</option>
-              <option value="Female">Female</option>
+              <option value="M">Male</option>
+              <option value="F">Female</option>
               <option value="All">All</option>
             </select>
           </div>

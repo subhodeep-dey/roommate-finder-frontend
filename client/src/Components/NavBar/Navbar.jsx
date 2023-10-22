@@ -1,7 +1,8 @@
 // eslint-disable-next-line
 import React, { useState, useEffect } from "react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
-
+import { logout } from "../../actions/AuthActions";
+import { useDispatch, useSelector } from "react-redux";
 import "./Navbar.css";
 
 function Navbar() {
@@ -27,6 +28,11 @@ function Navbar() {
     } else {
       setDropdown(false);
     }
+  };
+  const dispatch = useDispatch();
+
+  const handleLogOut = () => {
+    dispatch(logout());
   };
 
   function ProfileClickHandler() {
@@ -94,6 +100,13 @@ function Navbar() {
               onClick={ProfileClickHandler}
             ></Link>
           </li>
+          <li className="nav-item">
+            <Link
+              to="/"
+              className="nav-links logout"
+              onClick={handleLogOut}
+            ></Link>
+          </li>
           <li className="nav-item-mobile">
             <Link
               to="/home"
@@ -128,6 +141,15 @@ function Navbar() {
               onClick={closeMobileMenu}
             >
               Users
+            </Link>
+          </li>
+          <li className="nav-item-mobile">
+            <Link
+              to="/"
+              className="nav-links-mobile user"
+              onClick={handleLogOut}
+            >
+              Logout
             </Link>
           </li>
         </ul>

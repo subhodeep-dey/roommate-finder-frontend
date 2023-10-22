@@ -3,22 +3,6 @@ import axios from "axios";
 
 export const ListingContext = createContext(null);
 
-const getDefaultCart2 = (roommateList) => {
-  let cart = {};
-  for (const roommateId in roommateList) {
-    cart[roommateId] = 0;
-    console.log(roommateId);
-  }
-  return cart;
-};
-const getDefaultCart = (roomList) => {
-  let cart = {};
-  for (const roomId in roomList) {
-    cart[roomId] = 0;
-    console.log(roomId);
-  }
-  return cart;
-};
 export const ListingContextProvider = (props) => {
   const [roommateList, setRoommateList] = useState([]);
   const [roomList, setRoomList] = useState([]);
@@ -26,6 +10,27 @@ export const ListingContextProvider = (props) => {
   const [cartItems2, setCartItems2] = useState({});
   const [selectedRoommateCards, setSelectedRoommateCards] = useState([]);
   const [selectedRoomCards, setSelectedRoomCards] = useState([]);
+  const [showModal, setShowModel] = useState(false);
+  const [showModal2, setShowModel2] = useState(false);
+  const [seletedroommatedetail, setSelectedRoommateDetail] = useState(null);
+  const [seletedroomdetail, setSelectedRoomDetail] = useState(null);
+
+  const getDefaultCart2 = (roommateList) => {
+    let cart = {};
+    for (const roommateId in roommateList) {
+      cart[roommateId] = 0;
+      console.log(roommateId);
+    }
+    return cart;
+  };
+  const getDefaultCart = (roomList) => {
+    let cart = {};
+    for (const roomId in roomList) {
+      cart[roomId] = 0;
+      console.log(roomId);
+    }
+    return cart;
+  };
 
   useEffect(() => {
     axios
@@ -86,6 +91,36 @@ export const ListingContextProvider = (props) => {
     setCartItems2(getDefaultCart2(roommateList));
   }, [roomList, roommateList]);
 
+  const selectRoommateDetail = (RoommateDetail) => {
+    console.log(RoommateDetail);
+    const roommateHabits = roommateList.find((post) => {
+      return post === RoommateDetail;
+    });
+
+    setSelectedRoommateDetail(RoommateDetail);
+    console.log(setSelectedRoommateDetail);
+    setShowModel(true);
+  };
+
+  const selectRoomDetail = (RoomDetail) => {
+    console.log(RoomDetail);
+    const roomHabits = roommateList.find((post) => {
+      return post === RoomDetail;
+    });
+
+    setSelectedRoomDetail(RoomDetail);
+    console.log(setSelectedRoomDetail);
+    setShowModel2(true);
+  };
+
+  const closeModal = () => {
+    setShowModel(false);
+    setShowModel2(false);
+  };
+  const closeModal2 = () => {
+    setShowModel2(false);
+  };
+
   const addToCart = (itemId) => {
     if (cartItems[itemId] === 1) {
       alert("You already selected this person.");
@@ -117,6 +152,16 @@ export const ListingContextProvider = (props) => {
     removeFromCart,
     selectedRoommateCards,
     selectedRoomCards,
+    showModal,
+    setShowModel,
+    selectRoommateDetail,
+    seletedroommatedetail,
+    selectRoomDetail,
+    seletedroomdetail,
+    closeModal,
+    showModal2,
+    setShowModel2,
+    closeModal2,
   };
   console.log(cartItems);
   console.log(cartItems2);
